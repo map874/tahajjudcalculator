@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#000" />
 
-
-  <title>Last third of the night calculator – Best Time for Tahajjud</title>
+  <title>Last Third of the Night Calculator – Best Time for Tahajjud</title>
   <meta name="description" content="Find the exact time for Tahajjud prayer based on your location. Use our free, easy-to-use Tahajjud time calculator and boost your night prayer routine." />
   <meta name="keywords" content="tahajjud time, tahajjud prayer, last third of night, night prayer, qiyam al layl, tahajjud calculator, islamic prayer times" />
 
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://tahajjudtime.com/" />
   <meta property="og:title" content="Tahajjud Time Calculator – Best Time for Night Prayer" />
   <meta property="og:description" content="Find the exact time for Tahajjud prayer based on your location. Free and accurate calculator to help you pray at the best time." />
   <meta property="og:image" content="https://tahajjudtime.com/og-image.jpg" />
 
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://tahajjudtime.com/" />
   <meta name="twitter:title" content="Tahajjud Time Calculator – Best Time for Night Prayer" />
   <meta name="twitter:description" content="Free and accurate Tahajjud prayer time calculator based on your location. Start praying Tahajjud at the best possible time." />
   <meta name="twitter:image" content="https://tahajjudtime.com/og-image.jpg" />
 
+  <!-- Icons & PWA -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -42,7 +45,6 @@
   }
   </script>
 
-
   <style>
   html, body {
     margin: 0;
@@ -50,99 +52,105 @@
     font-family: 'Inter', sans-serif;
     background: #000;
     color: #eee;
+    -webkit-tap-highlight-color: transparent;
   }
 
+  #starCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 220px;
+    z-index: -1;
+  }
+
+  .container {
+    background: rgba(30,30,30,0.95);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    max-width: 90%;
+    margin: 2rem auto;
+    text-align: center;
+  }
+
+  h2 { font-size: clamp(1.3rem, 5vw, 1.7rem); margin-bottom: 1rem; }
+
+  label {
+    display: block;
+    margin: 0.7rem 0 0.3rem;
+    font-size: 0.85rem;
+    color: #bbb;
+    text-align: left;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 1rem;
+    border: 1px solid #555;
+    border-radius: 0.5rem;
+    background: #222;
+    color: #eee;
+  }
+
+  input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76,175,80,0.3);
+  }
+
+  button {
+    margin-top: 1rem;
+    background: #4CAF50;
+    color: white;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    font-size: 1.05rem;
+    min-height: 48px;
+    width: 100%;
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+
+  button:hover { background: #43a047; transform: scale(1.02); }
+
+  .result, .countdown {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .result b { color: #4CAF50; }
+
+  .progress-container { margin-top: 1rem; }
+  .progress-bar {
+    height: 14px;
+    border-radius: 8px;
+    background: #333;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-last-third {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: #4CAF50;
+  }
+
+  .disclaimer {
+    font-size: 0.75rem;
+    margin-top: 1rem;
+    color: #888;
+  }
   </style>
 </head>
 <body>
-
-</body>
-</html>
-<style>
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', sans-serif;
-  background: #000;
-  color: #eee;
-}
-#starCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 250px;
-  z-index: -1;
-}
-.container {
-  background: rgba(30,30,30,0.95);
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-  width: 380px;
-  text-align: center;
-  margin: 3rem auto;
-}
-h2 { font-size: 1.5rem; color: #fff; margin-bottom: 1.5rem; }
-label { display: block; margin: 0.75rem 0 0.3rem; font-size: 0.9rem; color: #bbb; text-align: left; }
-input {
-  padding: 0.8rem; width: 100%; border: 1px solid #555; border-radius: 0.6rem;
-  font-size: 0.95rem; outline: none; background: #222; color: #eee; margin-bottom: 0.5rem;
-}
-input:focus { border-color: #4CAF50; box-shadow: 0 0 0 3px rgba(76,175,80,0.3); }
-button {
-  margin-top: 1rem; background: #4CAF50; color: white; padding: 0.9rem; border: none;
-  border-radius: 0.7rem; cursor: pointer; font-size: 1rem; width: 100%; transition: all 0.2s;
-}
-button:hover { background: #43a047; transform: scale(1.02); }
-.result { margin-top: 1rem; font-weight: 500; font-size: 1rem; color: #eee; line-height: 1.5; }
-.result b { color: #4CAF50; }
-.countdown { margin-top: 0.8rem; font-size: 0.9rem; color: #4CAF50; font-weight: 500; }
-.disclaimer {
-  margin-top: 1.5rem;
-  font-size: 0.75rem;
-  color: #888;
-  line-height: 1.2;
-}
-
-/* Progress Bar */
-.progress-container { margin-top: 1rem; position: relative; }
-.progress-labels {
-  display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 500;
-  position: relative;
-  margin-bottom: 2px;
-  color: #bbb;
-}
-.progress-times {
-  display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 500;
-  margin-bottom: 6px;
-  color: #aaa;
-  position: relative;
-}
-#lastThirdLabel, #lastThirdTime {
-  position: absolute;
-  transform: translateX(-50%);
-}
-.progress-bar {
-  height: 16px; border-radius: 8px; overflow: hidden; position: relative;
-  background: #333;
-}
-.progress-night {
-  position: absolute; left: 0; top: 0; height: 100%; width: 100%; background: #555;
-}
-.progress-last-third {
-  position: absolute; top: 0; height: 100%; background: #4CAF50;
-}
-</style>
-</head>
-<body>
-
 <canvas id="starCanvas"></canvas>
 
 <div class="container">
   <h2>🌙 Last Third of the Night</h2>
 
-  <button onclick="useLocation()">Get Prayer Times Automatically</button>
+  <button onclick="useLocation()" aria-label="Use current location for prayer times">📍 Get Prayer Times Automatically</button>
 
   <label>Maghrib (Sunset) Time</label>
   <input type="time" id="maghrib" />
@@ -150,24 +158,13 @@ button:hover { background: #43a047; transform: scale(1.02); }
   <label>Fajr Time</label>
   <input type="time" id="fajr" />
 
-  <button onclick="calculateLastThird()">Calculate</button>
+  <button onclick="calculateLastThird()" aria-label="Calculate last third of the night">Calculate</button>
 
   <div class="result" id="result"></div>
   <div class="countdown" id="countdown"></div>
 
-  <div class="progress-container" id="progressContainer" style="display:block;">
-    <div class="progress-labels">
-      <span id="maghribLabel">Maghrib</span>
-      <span id="lastThirdLabel">Last Third</span>
-      <span id="fajrLabel">Fajr</span>
-    </div>
-    <div class="progress-times">
-      <span id="maghribTime">--:--</span>
-      <span id="lastThirdTime">--:--</span>
-      <span id="fajrTime">--:--</span>
-    </div>
+  <div class="progress-container">
     <div class="progress-bar">
-      <div class="progress-night"></div>
       <div class="progress-last-third" id="lastThirdBar"></div>
     </div>
   </div>
@@ -176,111 +173,100 @@ button:hover { background: #43a047; transform: scale(1.02); }
 </div>
 
 <script>
-// ----------------- Starry background -----------------
+// ---- Starry Background ----
 const canvas = document.getElementById('starCanvas');
 const ctx = canvas.getContext('2d');
 let stars = [];
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = 250; }
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=220; }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-for (let i = 0; i < 150; i++) {
-  stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.2, dx:(Math.random()-0.5)/2, dy:(Math.random()-0.5)/2});
+
+for (let i=0;i<120;i++){
+  stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2,dx:(Math.random()-0.5)/3,dy:(Math.random()-0.5)/3});
 }
-function animateStars() {
+
+function animateStars(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  const grad = ctx.createLinearGradient(0,0,0,canvas.height);
-  grad.addColorStop(0,'rgba(0,0,0,1)');
-  grad.addColorStop(1,'rgba(30,30,50,0.3)');
-  ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width,canvas.height);
-  for (let s of stars) {
-    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+  const grad=ctx.createLinearGradient(0,0,0,canvas.height);
+  grad.addColorStop(0,'#000'); grad.addColorStop(1,'#222');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
+  stars.forEach(s=>{
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle='#fff'; ctx.fill();
     s.x+=s.dx; s.y+=s.dy;
     if(s.x<0)s.x=canvas.width; if(s.x>canvas.width)s.x=0;
     if(s.y<0)s.y=canvas.height; if(s.y>canvas.height)s.y=0;
-  }
-  requestAnimationFrame(animateStars);
+  });
+  if(!document.hidden) requestAnimationFrame(animateStars);
 }
 animateStars();
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) animateStars(); });
 
-// ----------------- Utility -----------------
-function toMinutes(timeStr){const [h,m]=timeStr.split(":").map(Number); return h*60+m;}
-function toTimeString(minutes){minutes=Math.ceil(minutes); let h=Math.floor(minutes/60)%24; let m=minutes%60; return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;}
+// ---- Utilities ----
+const toMinutes=t=>{const [h,m]=t.split(":").map(Number);return h*60+m;};
+const toTimeString=m=>{m=Math.ceil(m);let h=Math.floor(m/60)%24,x=m%60;return `${h.toString().padStart(2,"0")}:${x.toString().padStart(2,"0")}`;};
 
-// ----------------- Calculation -----------------
-let lastThirdStartMins=0, maghribMinsGlobal=0, fajrMinsGlobal=0;
+let lastThirdStart=0, fajrMins=0, maghribMins=0;
+
 function calculateLastThird(){
   const maghrib=document.getElementById("maghrib").value;
   const fajr=document.getElementById("fajr").value;
-  if(!maghrib || !fajr){document.getElementById("result").innerText="⚠️ Please enter both times."; return;}
-  let maghribMins=toMinutes(maghrib);
-  let fajrMins=toMinutes(fajr);
-  if(fajrMins<maghribMins) fajrMins+=24*60;
-  maghribMinsGlobal=maghribMins; fajrMinsGlobal=fajrMins;
-  const nightDuration=fajrMins-maghribMins;
-  const third=nightDuration/3;
-  lastThirdStartMins=fajrMins-third;
-  document.getElementById("result").innerHTML=`The last third of the night is:<br><b>${toTimeString(lastThirdStartMins)}</b> → <b>${toTimeString(fajrMins)}</b>`;
+  if(!maghrib||!fajr){document.getElementById("result").innerText="⚠️ Please enter both times.";return;}
+  maghribMins=toMinutes(maghrib);
+  fajrMins=toMinutes(fajr);
+  if(fajrMins<maghribMins) fajrMins+=1440;
+  const night=fajrMins-maghribMins;
+  lastThirdStart=fajrMins-night/3;
 
-  document.getElementById("maghribTime").innerText=toTimeString(maghribMins);
-  document.getElementById("lastThirdTime").innerText=toTimeString(lastThirdStartMins);
-  document.getElementById("fajrTime").innerText=toTimeString(fajrMins);
-
-  // Update green bar based on actual last third
-  const leftPercent=((lastThirdStartMins-maghribMins)/nightDuration)*100;
-  const widthPercent=((fajrMins-lastThirdStartMins)/nightDuration)*100;
-  const lastThirdBar=document.getElementById("lastThirdBar");
-  lastThirdBar.style.left=leftPercent+'%';
-  lastThirdBar.style.width=widthPercent+'%';
-
-  // Place label and time at 2/3 along the entire bar
-  const labelPos=66.66; // 2/3 of total bar
-  document.getElementById("lastThirdLabel").style.left=labelPos+'%';
-  document.getElementById("lastThirdTime").style.left=labelPos+'%';
+  document.getElementById("result").innerHTML=`The last third of the night is:<br><b>${toTimeString(lastThirdStart)}</b> → <b>${toTimeString(fajrMins)}</b>`;
+  const left=((lastThirdStart-maghribMins)/night)*100;
+  const width=((fajrMins-lastThirdStart)/night)*100;
+  const bar=document.getElementById("lastThirdBar");
+  bar.style.left=left+"%"; bar.style.width=width+"%";
 
   startCountdown();
   scheduleNotification();
 }
 
-// ----------------- Countdown -----------------
 function startCountdown(){
-  const countdownEl=document.getElementById("countdown");
+  const el=document.getElementById("countdown");
   function tick(){
     const now=new Date();
-    let nowMins=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
-    let diff=Math.max(0,lastThirdStartMins-nowMins);
+    let mins=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+    let diff=Math.max(0,lastThirdStart-mins);
     const h=Math.floor(diff/60), m=Math.floor(diff%60), s=Math.floor((diff-Math.floor(diff))*60);
-    countdownEl.innerText=diff>0?`Countdown to last third: ${h}h ${m}m ${s}s`:`Last third has started!`;
-    setTimeout(tick,1000);
+    el.textContent=diff>0?`Countdown to last third: ${h}h ${m}m ${s}s`:`Last third has started!`;
+    requestAnimationFrame(tick);
   }
   tick();
 }
 
-// ----------------- Notifications -----------------
-function scheduleNotification(){
-  if(!("Notification" in window)) return;
-  Notification.requestPermission().then(p=>{
-    if(p!=="granted") return;
-    const notifTime=new Date();
-    notifTime.setHours(Math.floor(lastThirdStartMins/60),lastThirdStartMins%60,0,0);
-    const delay=notifTime-new Date();
-    if(delay>0) setTimeout(()=>new Notification("🌙 Last Third Reminder",{body:"It's time for the last third of the night!"}),delay);
-  });
+async function useLocation(){
+  if(!navigator.geolocation){alert("Geolocation not supported.");return;}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude,longitude}=pos.coords;
+    try{
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),6000);
+      const res=await fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`,{signal:controller.signal});
+      clearTimeout(timeout);
+      const data=await res.json();
+      document.getElementById("maghrib").value=data.data.timings.Maghrib.slice(0,5);
+      document.getElementById("fajr").value=data.data.timings.Fajr.slice(0,5);
+      calculateLastThird();
+    }catch(e){alert("Could not fetch prayer times.");}
+  },()=>alert("Location permission denied."));
 }
 
-// ----------------- Location -----------------
-function useLocation(){
-  if(!navigator.geolocation){alert("Geolocation not supported."); return;}
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const lat=pos.coords.latitude, lon=pos.coords.longitude;
-    try{
-      const response=await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`);
-      const data=await response.json();
-      const timings=data.data.timings;
-      document.getElementById("maghrib").value=timings.Maghrib.slice(0,5);
-      document.getElementById("fajr").value=timings.Fajr.slice(0,5);
-      calculateLastThird();
-    }catch(err){alert("Failed to fetch prayer times.");}
-  },()=>alert("Permission denied for location."));
+function scheduleNotification(){
+  if(!("Notification" in window))return;
+  Notification.requestPermission().then(p=>{
+    if(p!=="granted")return;
+    const notifTime=new Date();
+    notifTime.setHours(Math.floor(lastThirdStart/60),lastThirdStart%60,0,0);
+    const delay=notifTime-new Date();
+    if(delay>0)setTimeout(()=>new Notification("🌙 Last Third Reminder",{body:"It's time for the last third of the night!"}),delay);
+  });
 }
 </script>
 </body>
