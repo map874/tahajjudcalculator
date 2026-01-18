@@ -1,274 +1,240 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#000" />
+import React, { useState, useEffect } from 'react';
+import { Moon, Bell, BellOff, Clock, Sunrise, Sunset } from 'lucide-react';
 
-  <title>Last Third of the Night Calculator – Best Time for Tahajjud</title>
-  <meta name="description" content="Find the exact time for Tahajjud prayer based on your location. Use our free, easy-to-use Tahajjud time calculator and boost your night prayer routine." />
-  <meta name="keywords" content="tahajjud time, tahajjud prayer, last third of night, night prayer, qiyam al layl, tahajjud calculator, islamic prayer times" />
+export default function TahajjudTime() {
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [sunsetTime, setSunsetTime] = useState('');
+  const [dawnTime, setDawnTime] = useState('');
+  const [lastThirdStart, setLastThirdStart] = useState(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [notificationSent, setNotificationSent] = useState(false);
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://tahajjudtime.com/" />
-  <meta property="og:title" content="Tahajjud Time Calculator – Best Time for Night Prayer" />
-  <meta property="og:description" content="Find the exact time for Tahajjud prayer based on your location. Free and accurate calculator to help you pray at the best time." />
-  <meta property="og:image" content="https://tahajjudtime.com/og-image.jpg" />
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://tahajjudtime.com/" />
-  <meta name="twitter:title" content="Tahajjud Time Calculator – Best Time for Night Prayer" />
-  <meta name="twitter:description" content="Free and accurate Tahajjud prayer time calculator based on your location. Start praying Tahajjud at the best possible time." />
-  <meta name="twitter:image" content="https://tahajjudtime.com/og-image.jpg" />
-
-  <!-- Icons & PWA -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Tahajjud Time",
-    "url": "https://tahajjudtime.com/",
-    "description": "Free online tool to calculate Tahajjud prayer time based on location and help Muslims pray at the best time.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://tahajjudtime.com/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-
-  <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-    background: #000;
-    color: #eee;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  #starCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 220px;
-    z-index: -1;
-  }
-
-  .container {
-    background: rgba(30,30,30,0.95);
-    padding: 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-    width: 90%;
-    max-width: 420px;
-    margin: 2rem auto;
-    text-align: center;
-  }
-
-  h2 { font-size: clamp(1.3rem, 5vw, 1.7rem); margin-bottom: 1rem; }
-
-  label {
-    display: block;
-    margin: 0.7rem 0 0.3rem;
-    font-size: 0.85rem;
-    color: #bbb;
-    text-align: left;
-  }
-
-  input {
-    width: 100%;
-    padding: 0.7rem;
-    font-size: 1rem;
-    border: 1px solid #555;
-    border-radius: 0.5rem;
-    background: #222;
-    color: #eee;
-  }
-
-  input:focus {
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76,175,80,0.3);
-  }
-
-  button {
-    margin-top: 1rem;
-    background: #4CAF50;
-    color: white;
-    padding: 0.9rem;
-    border: none;
-    border-radius: 0.6rem;
-    cursor: pointer;
-    font-size: 1.05rem;
-    min-height: 48px;
-    width: 100%;
-    transition: transform 0.15s ease, background 0.2s ease;
-  }
-
-  button:hover { background: #43a047; transform: scale(1.02); }
-
-  .result, .countdown {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-
-  .result b { color: #4CAF50; }
-
-  .progress-container { margin-top: 1rem; }
-  .progress-bar {
-    height: 14px;
-    border-radius: 8px;
-    background: #333;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .progress-last-third {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    background: #4CAF50;
-  }
-
-  .disclaimer {
-    font-size: 0.75rem;
-    margin-top: 1rem;
-    color: #888;
-  }
-  </style>
-</head>
-<body>
-<canvas id="starCanvas"></canvas>
-
-<div class="container">
-  <h2>🌙 Last Third of the Night</h2>
-
-  <button onclick="useLocation()" aria-label="Use current location for prayer times">📍 Get Prayer Times Automatically</button>
-
-  <label>Maghrib (Sunset) Time</label>
-  <input type="time" id="maghrib" />
-
-  <label>Fajr Time</label>
-  <input type="time" id="fajr" />
-
-  <button onclick="calculateLastThird()" aria-label="Calculate last third of the night">Calculate</button>
-
-  <div class="result" id="result"></div>
-  <div class="countdown" id="countdown"></div>
-
-  <div class="progress-container">
-    <div class="progress-bar">
-      <div class="progress-last-third" id="lastThirdBar"></div>
-    </div>
-  </div>
-
-  <div class="disclaimer">⚠️ Automatic prayer times may not be accurate and may need adjusting manually.</div>
-</div>
-
-<script>
-// ---- Starry Background ----
-const canvas = document.getElementById('starCanvas');
-const ctx = canvas.getContext('2d');
-let stars = [];
-function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=220; }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-for (let i=0;i<120;i++){
-  stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2,dx:(Math.random()-0.5)/3,dy:(Math.random()-0.5)/3});
-}
-
-function animateStars(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const grad=ctx.createLinearGradient(0,0,0,canvas.height);
-  grad.addColorStop(0,'#000'); grad.addColorStop(1,'#222');
-  ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
-  stars.forEach(s=>{
-    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    ctx.fillStyle='#fff'; ctx.fill();
-    s.x+=s.dx; s.y+=s.dy;
-    if(s.x<0)s.x=canvas.width; if(s.x>canvas.width)s.x=0;
-    if(s.y<0)s.y=canvas.height; if(s.y>canvas.height)s.y=0;
-  });
-  if(!document.hidden) requestAnimationFrame(animateStars);
-}
-animateStars();
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden) animateStars(); });
-
-// ---- Utilities ----
-const toMinutes=t=>{const [h,m]=t.split(":").map(Number);return h*60+m;};
-const toTimeString=m=>{m=Math.ceil(m);let h=Math.floor(m/60)%24,x=m%60;return `${h.toString().padStart(2,"0")}:${x.toString().padStart(2,"0")}`;};
-
-let lastThirdStart=0, fajrMins=0, maghribMins=0;
-
-function calculateLastThird(){
-  const maghrib=document.getElementById("maghrib").value;
-  const fajr=document.getElementById("fajr").value;
-  if(!maghrib||!fajr){document.getElementById("result").innerText="⚠️ Please enter both times.";return;}
-  maghribMins=toMinutes(maghrib);
-  fajrMins=toMinutes(fajr);
-  if(fajrMins<maghribMins) fajrMins+=1440;
-  const night=fajrMins-maghribMins;
-  lastThirdStart=fajrMins-night/3;
-
-  document.getElementById("result").innerHTML=`The last third of the night is:<br><b>${toTimeString(lastThirdStart)}</b> → <b>${toTimeString(fajrMins)}</b>`;
-  const left=((lastThirdStart-maghribMins)/night)*100;
-  const width=((fajrMins-lastThirdStart)/night)*100;
-  const bar=document.getElementById("lastThirdBar");
-  bar.style.left=left+"%"; bar.style.width=width+"%";
-
-  startCountdown();
-  scheduleNotification();
-}
-
-function startCountdown(){
-  const el=document.getElementById("countdown");
-  function tick(){
-    const now=new Date();
-    let mins=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
-    let diff=Math.max(0,lastThirdStart-mins);
-    const h=Math.floor(diff/60), m=Math.floor(diff%60), s=Math.floor((diff-Math.floor(diff))*60);
-    el.textContent=diff>0?`Countdown to last third: ${h}h ${m}m ${s}s`:`Last third has started!`;
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-async function useLocation(){
-  if(!navigator.geolocation){alert("Geolocation not supported.");return;}
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const {latitude,longitude}=pos.coords;
-    try{
-      const controller=new AbortController();
-      const timeout=setTimeout(()=>controller.abort(),6000);
-      const res=await fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`,{signal:controller.signal});
-      clearTimeout(timeout);
-      const data=await res.json();
-      document.getElementById("maghrib").value=data.data.timings.Maghrib.slice(0,5);
-      document.getElementById("fajr").value=data.data.timings.Fajr.slice(0,5);
+  useEffect(() => {
+    if (sunsetTime && dawnTime) {
       calculateLastThird();
-    }catch(e){alert("Could not fetch prayer times.");}
-  },()=>alert("Location permission denied."));
-}
+    }
+  }, [sunsetTime, dawnTime, currentTime]);
 
-function scheduleNotification(){
-  if(!("Notification" in window))return;
-  Notification.requestPermission().then(p=>{
-    if(p!=="granted")return;
-    const notifTime=new Date();
-    notifTime.setHours(Math.floor(lastThirdStart/60),lastThirdStart%60,0,0);
-    const delay=notifTime-new Date();
-    if(delay>0)setTimeout(()=>new Notification("🌙 Last Third Reminder",{body:"It's time for the last third of the night!"}),delay);
-  });
+  const parseTime = (timeStr) => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
+
+  const calculateLastThird = () => {
+    const sunset = parseTime(sunsetTime);
+    let dawn = parseTime(dawnTime);
+    
+    if (dawn < sunset) {
+      dawn.setDate(dawn.getDate() + 1);
+    }
+
+    const nightDuration = dawn - sunset;
+    const lastThirdDuration = nightDuration / 3;
+    const lastThird = new Date(dawn - lastThirdDuration);
+    
+    setLastThirdStart(lastThird);
+
+    if (notificationsEnabled && !notificationSent && currentTime >= lastThird && currentTime < dawn) {
+      sendNotification();
+      setNotificationSent(true);
+    }
+
+    if (currentTime < lastThird || currentTime >= dawn) {
+      setNotificationSent(false);
+    }
+  };
+
+  const sendNotification = () => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Tahajjud Time', {
+        body: 'The last third of the night has begun. Time for Tahajjud prayer.',
+        icon: '🌙',
+      });
+    }
+  };
+
+  const toggleNotifications = async () => {
+    if (!notificationsEnabled) {
+      if ('Notification' in window) {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          setNotificationsEnabled(true);
+        }
+      }
+    } else {
+      setNotificationsEnabled(false);
+    }
+  };
+
+  const getProgress = () => {
+    if (!lastThirdStart || !sunsetTime || !dawnTime) return 0;
+
+    const sunset = parseTime(sunsetTime);
+    let dawn = parseTime(dawnTime);
+    
+    if (dawn < sunset) {
+      dawn.setDate(dawn.getDate() + 1);
+    }
+
+    const nightDuration = dawn - sunset;
+    let elapsed = currentTime - sunset;
+
+    if (currentTime < sunset) {
+      return 0;
+    }
+    if (currentTime > dawn) {
+      return 100;
+    }
+
+    return (elapsed / nightDuration) * 100;
+  };
+
+  const getTimeUntilLastThird = () => {
+    if (!lastThirdStart) return null;
+
+    const diff = lastThirdStart - currentTime;
+    
+    if (diff <= 0) {
+      const dawn = parseTime(dawnTime);
+      if (dawn < parseTime(sunsetTime)) {
+        dawn.setDate(dawn.getDate() + 1);
+      }
+      
+      if (currentTime < dawn) {
+        return { text: 'Last third is now!', color: 'text-green-400' };
+      }
+      return { text: 'Night has passed', color: 'text-gray-400' };
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return {
+      text: `${hours}h ${minutes}m ${seconds}s`,
+      color: 'text-blue-400'
+    };
+  };
+
+  const progress = getProgress();
+  const countdown = getTimeUntilLastThird();
+  const lastThirdProgress = progress >= 66.67;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-900 p-6 flex items-center justify-center">
+      <div className="max-w-md w-full">
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-slate-700/50">
+          <div className="flex items-center justify-center mb-8">
+            <Moon className="w-12 h-12 text-purple-400 mr-3" />
+            <h1 className="text-4xl font-bold text-white">Tahajjud Time</h1>
+          </div>
+
+          <div className="space-y-6 mb-8">
+            <div>
+              <label className="flex items-center text-sm font-medium text-slate-300 mb-2">
+                <Sunset className="w-4 h-4 mr-2 text-orange-400" />
+                Sunset Time (Maghrib)
+              </label>
+              <input
+                type="time"
+                value={sunsetTime}
+                onChange={(e) => setSunsetTime(e.target.value)}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="flex items-center text-sm font-medium text-slate-300 mb-2">
+                <Sunrise className="w-4 h-4 mr-2 text-yellow-400" />
+                Dawn Time (Fajr)
+              </label>
+              <input
+                type="time"
+                value={dawnTime}
+                onChange={(e) => setDawnTime(e.target.value)}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+
+          {lastThirdStart && (
+            <div className="space-y-6">
+              <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/30">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-medium text-slate-300">Night Progress</span>
+                  <span className="text-sm text-slate-400">{progress.toFixed(1)}%</span>
+                </div>
+                
+                <div className="relative h-4 bg-slate-900/50 rounded-full overflow-hidden">
+                  <div
+                    className="absolute h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-1000 rounded-full"
+                    style={{ width: `${progress}%` }}
+                  />
+                  <div
+                    className="absolute h-full border-l-2 border-green-400"
+                    style={{ left: '66.67%' }}
+                  />
+                </div>
+                
+                <div className="flex justify-between mt-2 text-xs text-slate-400">
+                  <span>Sunset</span>
+                  <span className="text-green-400">Last Third</span>
+                  <span>Dawn</span>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="text-sm text-slate-400 mb-2">
+                  {lastThirdProgress ? 'Last third has begun' : 'Time until last third'}
+                </div>
+                <div className={`text-5xl font-bold ${countdown?.color || 'text-white'} mb-2`}>
+                  {countdown?.text || '--:--:--'}
+                </div>
+                <div className="text-sm text-slate-400">
+                  Last third starts at {lastThirdStart.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+
+              <button
+                onClick={toggleNotifications}
+                className={`w-full flex items-center justify-center gap-3 py-4 rounded-xl font-semibold transition-all ${
+                  notificationsEnabled
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                }`}
+              >
+                {notificationsEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+                {notificationsEnabled ? 'Notifications On' : 'Enable Notifications'}
+              </button>
+
+              <div className="text-center text-xs text-slate-500 mt-4">
+                <Clock className="w-3 h-3 inline mr-1" />
+                Current time: {currentTime.toLocaleTimeString()}
+              </div>
+            </div>
+          )}
+
+          {!sunsetTime && !dawnTime && (
+            <div className="text-center py-8 text-slate-400">
+              <Moon className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <p>Enter sunset and dawn times to begin</p>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6 text-center text-xs text-slate-500">
+          <p>The last third of the night is the most blessed time for Tahajjud prayer</p>
+        </div>
+      </div>
+    </div>
+  );
 }
-</script>
-</body>
-</html>
